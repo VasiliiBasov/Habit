@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: habit-backend
+  datasource:
+    # Dev: файловая H2 (переживает перезапуск). Prod: PostgreSQL через env-переменные.
+    url: ${DB_URL:jdbc:h2:file:./data/habitdb;AUTO_SERVER=TRUE}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+  jpa:
+    hibernate:
+      # Перед продом заменить на validate + Flyway-миграции
+      ddl-auto: update
+    open-in-view: false
+  ai:
+    # none — приложение стартует без ключа (эндпоинт ИИ вернёт 503 до настройки).
+    # Для активации: SPRING_AI_MODEL_CHAT=openai + OPENAI_API_KEY=sk-...
+    model:
+      chat: ${SPRING_AI_MODEL_CHAT:none}
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4o-mini}
+          temperature: 0.7
+
+app:
+  jwt:
+    # ОБЯЗАТЕЛЬНО заменить на проде (base64, >= 32 байт): JWT_SECRET=<base64>
+    secret: ${JWT_SECRET:aXN0cmlrLWtyYWZ0LWJhbmRpdC1oYWJlZW4tc2lnaHQtdmlkZW8td2FyZW4tMjU2Yml0cw==}
+    expiration-ms: ${JWT_EXPIRATION_MS:2592000000} # 30 дней — мобильное приложение
+  ai:
+    # Лимит ИИ-сообщений в сутки для бесплатных пользователей (freemium)
+    free-daily-limit: ${AI_FREE_DAILY_LIMIT:5}
+  revenuecat:
+    # Секрет из RevenueCat Dashboard → Webhook configuration (Authorization header)
+    webhook-secret: ${REVENUECAT_WEBHOOK_SECRET:}
+
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    com.habit: INFO
