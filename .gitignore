@@ -41,3 +41,12 @@ build/
 ### H2 dev database ###
 data/
 *.mv.db
+
+### Прод-секреты деплоя ###
+deploy/.env
+
+### Flutter app (подпись/билды; дублирует app/.gitignore на случай копирования) ###
+**/key.properties
+*.jks
+app/build/
+app/.dart_tool/
